@@ -8,7 +8,7 @@ static void ok_popup(lv_event_t *event) {
   lv_tabview_set_act(tabview, atoi(lv_label_get_text(activeTabIndex)), LV_ANIM_OFF);
 
   if (getConfirmationMenuAction() == "resetMeasure") {
-    send("resetMeasure", "");
+    communication.sendEvent("resetMeasure", "");
   }
 }
 

@@ -2,44 +2,44 @@
 
 static void move_left_cb(lv_event_t *event) {
   if(event->code == LV_EVENT_LONG_PRESSED_REPEAT) {
-    send("moveLft", "");
+    communication.sendEvent("moveLft", "");
   } else if(event->code == LV_EVENT_SHORT_CLICKED) {
-    send("moveLft", "92");
+    communication.sendEvent("moveLft", "92");
   }
 }
 
 static void move_right_cb(lv_event_t *event) {
   if(event->code == LV_EVENT_LONG_PRESSED_REPEAT) {
-    send("moveRgt", "");
+    communication.sendEvent("moveRgt", "");
   } else if(event->code == LV_EVENT_SHORT_CLICKED) {
-    send("moveRgt", "92");
+    communication.sendEvent("moveRgt", "92");
   }
 }
 
 static void add_right_cb(lv_event_t *event) {
-  send("addRPos", "");
+  communication.sendEvent("addRPos", "");
 }
 
 static void remove_right_cb(lv_event_t *event) {
-  send("rmRPos", "");
+  communication.sendEvent("rmRPos", "");
 }
 
 static void add_left_cb(lv_event_t *event) {
-  send("addLPos", "");
+  communication.sendEvent("addLPos", "");
 }
 
 static void remove_left_cb(lv_event_t *event) {
-  send("rmLPos", "");
+  communication.sendEvent("rmLPos", "");
 }
 
 static void home_aligner_cb(lv_event_t *event) {
-  send("homeAligner", "");
+  communication.sendEvent("homeAligner", "");
 }
 
 static void set_aligner_end_position(lv_event_t *event) {
-  send("setAligner", "");
+  communication.sendEvent("setAligner", "");
 
-  delay(100);
+  delay(250);
 
   lv_obj_t *tempParent = lv_obj_get_parent(event->target);
 
@@ -49,7 +49,7 @@ static void set_aligner_end_position(lv_event_t *event) {
 }
 
 static void set_aligner_start_position(lv_event_t *event) {
-  send("setAligner", "");
+  communication.sendEvent("setAligner", "");
 
   lv_obj_t *alignerSetEndPositionBtn = lv_btn_create(lv_obj_get_parent(event->target));
   lv_obj_set_size(alignerSetEndPositionBtn, LV_SIZE_CONTENT, 80);
@@ -61,7 +61,7 @@ static void set_aligner_start_position(lv_event_t *event) {
   lv_label_set_text(alignerSetEndPositionBtnLabel, "Establecer fin");
   lv_obj_set_style_text_color(alignerSetEndPositionBtnLabel, lv_color_hex(0xFFFFFF), 0);
 
-  delay(100);
+  delay(250);
 
   lv_obj_del(event->target);
 }
@@ -69,7 +69,7 @@ static void set_aligner_start_position(lv_event_t *event) {
 static void start_aligner(lv_event_t *event) {
   lv_obj_add_flag(event->target, LV_OBJ_FLAG_HIDDEN);
 
-  send("startAligner", "");
+  communication.sendEvent("startAligner", "");
 
   lv_obj_t *alignerSetStartPositionBtn = lv_btn_create(lv_obj_get_parent(event->target));
   lv_obj_set_size(alignerSetStartPositionBtn, LV_SIZE_CONTENT, 80);

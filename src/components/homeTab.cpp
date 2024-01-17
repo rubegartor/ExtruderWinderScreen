@@ -23,7 +23,7 @@ static void lv_diameter_spinbox_increment_event_cb(lv_event_t * e)
   if(code == LV_EVENT_CLICKED) {
     lv_spinbox_increment(diameterSpinbox);
 
-    send("setDiameter", (String)lv_spinbox_get_value(diameterSpinbox));
+    communication.sendEvent("setDiameter", (String)lv_spinbox_get_value(diameterSpinbox));
   }
 }
 
@@ -33,7 +33,7 @@ static void lv_diameter_spinbox_decrement_event_cb(lv_event_t * e)
   if(code == LV_EVENT_CLICKED) {
     lv_spinbox_decrement(diameterSpinbox);
 
-    send("setDiameter", (String)lv_spinbox_get_value(diameterSpinbox));
+    communication.sendEvent("setDiameter", (String)lv_spinbox_get_value(diameterSpinbox));
   }
 }
 
@@ -43,7 +43,7 @@ static void lv_autostop_spinbox_increment_event_cb(lv_event_t * e)
   if(code == LV_EVENT_CLICKED) {
     lv_spinbox_increment(autostopSpinbox);
 
-    send("setAutostop", (String)lv_spinbox_get_value(autostopSpinbox));
+    communication.sendEvent("setAutostop", (String)lv_spinbox_get_value(autostopSpinbox));
   }
 }
 
@@ -53,25 +53,7 @@ static void lv_autostop_spinbox_decrement_event_cb(lv_event_t * e)
   if(code == LV_EVENT_CLICKED) {
     lv_spinbox_decrement(autostopSpinbox);
 
-    send("setAutostop", (String)lv_spinbox_get_value(autostopSpinbox));
-  }
-}
-
-static void lv_blockui_event_cb(lv_event_t * e) {
-  if (lv_obj_get_state(diameterSpinboxMinBtn) == LV_STATE_DISABLED) {
-    lv_obj_clear_state(diameterSpinboxMinBtn, LV_STATE_DISABLED);
-    lv_obj_clear_state(diameterSpinboxMaxBtn, LV_STATE_DISABLED);
-    lv_obj_clear_state(autostopSpinboxMinBtn, LV_STATE_DISABLED);
-    lv_obj_clear_state(autostopSpinboxMaxBtn, LV_STATE_DISABLED);
-
-    lv_label_set_text(lv_obj_get_child(e->target, 0), "Block UI");
-  } else {
-    lv_obj_add_state(diameterSpinboxMinBtn, LV_STATE_DISABLED);
-    lv_obj_add_state(diameterSpinboxMaxBtn, LV_STATE_DISABLED);
-    lv_obj_add_state(autostopSpinboxMinBtn, LV_STATE_DISABLED);
-    lv_obj_add_state(autostopSpinboxMaxBtn, LV_STATE_DISABLED);
-
-    lv_label_set_text(lv_obj_get_child(e->target, 0), "Unblock UI");
+    communication.sendEvent("setAutostop", (String)lv_spinbox_get_value(autostopSpinbox));
   }
 }
 
@@ -126,33 +108,54 @@ void build_homeTab(lv_obj_t *parent) {
   lv_obj_set_style_bg_color(winderInfoParent, lv_palette_darken(LV_PALETTE_GREY, 2), 0);
   lv_obj_set_style_border_width(winderInfoParent, 0, 0);
   lv_obj_align_to(winderInfoParent, measuringParent, LV_ALIGN_OUT_BOTTOM_LEFT, 0, 10);
-  lv_obj_set_size(winderInfoParent, 280, LV_VER_RES - lv_obj_get_height(measuringParent) - 30);
+  lv_obj_set_size(winderInfoParent, 330, LV_VER_RES - lv_obj_get_height(measuringParent) - 30);
+
+  lv_obj_t *winderInfoPullerSpeedLabelIcon = lv_label_create(winderInfoParent);
+  lv_obj_set_style_text_font(winderInfoPullerSpeedLabelIcon, &testfont, 0);
+  lv_obj_set_style_text_color(winderInfoPullerSpeedLabelIcon, lv_color_hex(0xFFFFFF), 0);
+  lv_label_set_text(winderInfoPullerSpeedLabelIcon, SPEED_SYMBOL);
 
   winderInfoPullerSpeedLabel = lv_label_create(winderInfoParent);
   lv_obj_set_style_text_font(winderInfoPullerSpeedLabel, &lv_font_montserrat_48, 0);
   lv_obj_set_style_text_color(winderInfoPullerSpeedLabel, lv_color_hex(0xFFFFFF), 0);
   lv_label_set_text(winderInfoPullerSpeedLabel, "0");
+  lv_obj_align_to(winderInfoPullerSpeedLabel, winderInfoPullerSpeedLabelIcon, LV_ALIGN_LEFT_MID, 70, 0);
+
+  lv_obj_t *waterTempInfoLabelIcon = lv_label_create(winderInfoParent);
+  lv_obj_set_style_text_font(waterTempInfoLabelIcon, &testfont, 0);
+  lv_obj_set_style_text_color(waterTempInfoLabelIcon, lv_color_hex(0xFFFFFF), 0);
+  lv_label_set_text(waterTempInfoLabelIcon, TEMP_SYMBOL);
+  lv_obj_align_to(waterTempInfoLabelIcon, winderInfoPullerSpeedLabelIcon, LV_ALIGN_OUT_BOTTOM_MID, 0, 25);
+
+  waterTempInfoLabel = lv_label_create(winderInfoParent);
+  lv_obj_set_style_text_font(waterTempInfoLabel, &lv_font_montserrat_48, 0);
+  lv_obj_set_style_text_color(waterTempInfoLabel, lv_color_hex(0xFFFFFF), 0);
+  lv_label_set_text(waterTempInfoLabel, "0C");
+  lv_obj_align_to(waterTempInfoLabel, waterTempInfoLabelIcon, LV_ALIGN_LEFT_MID, 70 - (lv_obj_get_width(waterTempInfoLabelIcon) / 2), 0);
+
+  lv_obj_t *winderInfoWeightLabelIcon = lv_label_create(winderInfoParent);
+  lv_obj_set_style_text_font(winderInfoWeightLabelIcon, &testfont, 0);
+  lv_obj_set_style_text_color(winderInfoWeightLabelIcon, lv_color_hex(0xFFFFFF), 0);
+  lv_label_set_text(winderInfoWeightLabelIcon, WEIGHT_SYMBOL);
+  lv_obj_align_to(winderInfoWeightLabelIcon, waterTempInfoLabelIcon, LV_ALIGN_BOTTOM_LEFT, -(lv_obj_get_width(waterTempInfoLabelIcon) / 2), lv_obj_get_height(waterTempInfoLabelIcon) + 25);
 
   winderInfoWeightLabel = lv_label_create(winderInfoParent);
   lv_obj_set_style_text_font(winderInfoWeightLabel, &lv_font_montserrat_48, 0);
   lv_obj_set_style_text_color(winderInfoWeightLabel, lv_color_hex(0xFFFFFF), 0);
   lv_label_set_text(winderInfoWeightLabel, "0");
-  lv_obj_align_to(winderInfoWeightLabel, winderInfoPullerSpeedLabel, LV_ALIGN_OUT_BOTTOM_LEFT, 0, 20);
+  lv_obj_align_to(winderInfoWeightLabel, winderInfoWeightLabelIcon, LV_ALIGN_LEFT_MID, 70, 0);
+
+  lv_obj_t *winderInfoTimeLabelIcon = lv_label_create(winderInfoParent);
+  lv_obj_set_style_text_font(winderInfoTimeLabelIcon, &testfont, 0);
+  lv_obj_set_style_text_color(winderInfoTimeLabelIcon, lv_color_hex(0xFFFFFF), 0);
+  lv_label_set_text(winderInfoTimeLabelIcon, CLOCK_SYMBOL);
+  lv_obj_align_to(winderInfoTimeLabelIcon, winderInfoWeightLabelIcon, LV_ALIGN_OUT_BOTTOM_LEFT, 0, 25);
 
   winderInfoTimeLabel = lv_label_create(winderInfoParent);
   lv_obj_set_style_text_font(winderInfoTimeLabel, &lv_font_montserrat_48, 0);
   lv_obj_set_style_text_color(winderInfoTimeLabel, lv_color_hex(0xFFFFFF), 0);
   lv_label_set_text(winderInfoTimeLabel, "0");
-  lv_obj_align_to(winderInfoTimeLabel, winderInfoWeightLabel, LV_ALIGN_OUT_BOTTOM_LEFT, 0, 20);
-
-  lv_obj_t *blockUIBtn = lv_btn_create(winderInfoParent);
-  lv_obj_align(blockUIBtn, LV_ALIGN_BOTTOM_MID, 0, 0);
-  lv_obj_set_style_bg_color(blockUIBtn, lv_palette_main(LV_PALETTE_ORANGE), 0);
-  lv_obj_add_event_cb(blockUIBtn, lv_blockui_event_cb, LV_EVENT_CLICKED, NULL);
-
-  lv_obj_t *blockUIBtnLabel = lv_label_create(blockUIBtn);
-  lv_obj_set_style_text_color(blockUIBtnLabel, lv_color_hex(0xFFFFFF), 0);
-  lv_label_set_text(blockUIBtnLabel, "Block UI");
+  lv_obj_align_to(winderInfoTimeLabel, winderInfoTimeLabelIcon, LV_ALIGN_LEFT_MID, 70, 0);
 
   lv_obj_t *winderFilamentParent = lv_obj_create(parent);
   lv_obj_set_style_bg_color(winderFilamentParent, lv_palette_darken(LV_PALETTE_GREY, 2), 0);
@@ -187,7 +190,7 @@ void build_homeTab(lv_obj_t *parent) {
   lv_obj_set_style_bg_color(diameterSpinboxMaxBtn, lv_palette_main(LV_PALETTE_ORANGE), 0);
   lv_obj_add_event_cb(diameterSpinboxMaxBtn, lv_diameter_spinbox_increment_event_cb, LV_EVENT_ALL, NULL);
 
-  lv_obj_t *autostopSpinboxLabel = lv_label_create(winderFilamentParent);
+  autostopSpinboxLabel = lv_label_create(winderFilamentParent);
   lv_label_set_text(autostopSpinboxLabel, "Auto Stop");
   lv_obj_set_style_text_color(autostopSpinboxLabel, lv_color_hex(0xFFFFFF), 0);
   lv_obj_align(autostopSpinboxLabel, LV_ALIGN_TOP_LEFT, 0, 150);
