@@ -2,34 +2,28 @@
 
 #include <lvgl.h>
 #include <Arduino.h>
+#include <Arduino_H7_Video.h>
+#include <Arduino_GigaDisplayTouch.h>
+#include <Arduino_GigaDisplay.h>
 #include <communication/communication.h>
 
+extern Arduino_H7_Video Display;
+extern Arduino_GigaDisplayTouch TouchDetector;
+extern GigaDisplayRGB rgb;
+
 //0xf3fd, 0xf0b2, 0xf2c9, 0xf017, 0xf5cd
-LV_FONT_DECLARE(testfont);
+LV_FONT_DECLARE(icons);
 #define SPEED_SYMBOL "\xEF\x8F\xBD"
 #define MOVE_SYMBOL "\xEF\x82\xB2"
 #define TEMP_SYMBOL "\xEF\x8B\x89"
 #define CLOCK_SYMBOL "\xEF\x80\x97"
 #define WEIGHT_SYMBOL "\xEF\x97\x8D"
 
+extern Communication communication;
+
 extern float minRead, actRead, maxRead, weight, temp;
 extern uint16_t pSpeed, minPSpeed, maxPSpeed;
 extern String eTime;
-
-extern Communication communication;
-
-extern bool reqDiameterSetted;
-extern bool reqMinPSpeedSetted;
-extern bool reqMaxPSpeedSetted;
-extern bool reqPolymerSetted;
-extern bool reqMinReadSetted;
-extern bool reqMaxReadSetted;
-extern bool reqAutoStopSetted;
-extern bool reqMaxPositionSetted;
-extern bool reqMinPositionSetted;
-extern bool reqPositionedSetted;
-extern bool reqStAutoStopSetted;
-extern bool reqTempSetted;
 
 extern lv_obj_t *tabview, *tab1, *tab2, *tab3, *tab4;
 extern lv_obj_t *minMeasureLabel, *actMeasureLabel, *maxMeasureLabel;

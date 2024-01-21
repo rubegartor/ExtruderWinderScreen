@@ -1,23 +1,14 @@
 #include <components/general.h>
 
-float minRead, actRead, maxRead, weight, temp;
-uint16_t pSpeed, minPSpeed, maxPSpeed;
-String eTime;
+Arduino_H7_Video Display(800, 480, GigaDisplayShield);
+Arduino_GigaDisplayTouch TouchDetector;
+GigaDisplayRGB rgb;
 
 Communication communication;
 
-bool reqDiameterSetted;
-bool reqMinPSpeedSetted;
-bool reqMaxPSpeedSetted;
-bool reqPolymerSetted;
-bool reqMinReadSetted;
-bool reqMaxReadSetted;
-bool reqAutoStopSetted;
-bool reqMaxPositionSetted;
-bool reqMinPositionSetted;
-bool reqPositionedSetted;
-bool reqStAutoStopSetted;
-bool reqTempSetted;
+float minRead, actRead, maxRead, weight, temp;
+uint16_t pSpeed, minPSpeed, maxPSpeed;
+String eTime;
 
 lv_obj_t *tabview, *tab1, *tab2, *tab3, *tab4;
 lv_obj_t *minMeasureLabel, *actMeasureLabel, *maxMeasureLabel;

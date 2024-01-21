@@ -108,10 +108,10 @@ void build_homeTab(lv_obj_t *parent) {
   lv_obj_set_style_bg_color(winderInfoParent, lv_palette_darken(LV_PALETTE_GREY, 2), 0);
   lv_obj_set_style_border_width(winderInfoParent, 0, 0);
   lv_obj_align_to(winderInfoParent, measuringParent, LV_ALIGN_OUT_BOTTOM_LEFT, 0, 10);
-  lv_obj_set_size(winderInfoParent, 330, LV_VER_RES - lv_obj_get_height(measuringParent) - 30);
+  lv_obj_set_size(winderInfoParent, INFO_PARENT, LV_VER_RES - lv_obj_get_height(measuringParent) - 30);
 
   lv_obj_t *winderInfoPullerSpeedLabelIcon = lv_label_create(winderInfoParent);
-  lv_obj_set_style_text_font(winderInfoPullerSpeedLabelIcon, &testfont, 0);
+  lv_obj_set_style_text_font(winderInfoPullerSpeedLabelIcon, &icons, 0);
   lv_obj_set_style_text_color(winderInfoPullerSpeedLabelIcon, lv_color_hex(0xFFFFFF), 0);
   lv_label_set_text(winderInfoPullerSpeedLabelIcon, SPEED_SYMBOL);
 
@@ -122,7 +122,7 @@ void build_homeTab(lv_obj_t *parent) {
   lv_obj_align_to(winderInfoPullerSpeedLabel, winderInfoPullerSpeedLabelIcon, LV_ALIGN_LEFT_MID, 70, 0);
 
   lv_obj_t *waterTempInfoLabelIcon = lv_label_create(winderInfoParent);
-  lv_obj_set_style_text_font(waterTempInfoLabelIcon, &testfont, 0);
+  lv_obj_set_style_text_font(waterTempInfoLabelIcon, &icons, 0);
   lv_obj_set_style_text_color(waterTempInfoLabelIcon, lv_color_hex(0xFFFFFF), 0);
   lv_label_set_text(waterTempInfoLabelIcon, TEMP_SYMBOL);
   lv_obj_align_to(waterTempInfoLabelIcon, winderInfoPullerSpeedLabelIcon, LV_ALIGN_OUT_BOTTOM_MID, 0, 25);
@@ -130,11 +130,11 @@ void build_homeTab(lv_obj_t *parent) {
   waterTempInfoLabel = lv_label_create(winderInfoParent);
   lv_obj_set_style_text_font(waterTempInfoLabel, &lv_font_montserrat_48, 0);
   lv_obj_set_style_text_color(waterTempInfoLabel, lv_color_hex(0xFFFFFF), 0);
-  lv_label_set_text(waterTempInfoLabel, "0C");
+  lv_label_set_text(waterTempInfoLabel, "0");
   lv_obj_align_to(waterTempInfoLabel, waterTempInfoLabelIcon, LV_ALIGN_LEFT_MID, 70 - (lv_obj_get_width(waterTempInfoLabelIcon) / 2), 0);
 
   lv_obj_t *winderInfoWeightLabelIcon = lv_label_create(winderInfoParent);
-  lv_obj_set_style_text_font(winderInfoWeightLabelIcon, &testfont, 0);
+  lv_obj_set_style_text_font(winderInfoWeightLabelIcon, &icons, 0);
   lv_obj_set_style_text_color(winderInfoWeightLabelIcon, lv_color_hex(0xFFFFFF), 0);
   lv_label_set_text(winderInfoWeightLabelIcon, WEIGHT_SYMBOL);
   lv_obj_align_to(winderInfoWeightLabelIcon, waterTempInfoLabelIcon, LV_ALIGN_BOTTOM_LEFT, -(lv_obj_get_width(waterTempInfoLabelIcon) / 2), lv_obj_get_height(waterTempInfoLabelIcon) + 25);
@@ -146,7 +146,7 @@ void build_homeTab(lv_obj_t *parent) {
   lv_obj_align_to(winderInfoWeightLabel, winderInfoWeightLabelIcon, LV_ALIGN_LEFT_MID, 70, 0);
 
   lv_obj_t *winderInfoTimeLabelIcon = lv_label_create(winderInfoParent);
-  lv_obj_set_style_text_font(winderInfoTimeLabelIcon, &testfont, 0);
+  lv_obj_set_style_text_font(winderInfoTimeLabelIcon, &icons, 0);
   lv_obj_set_style_text_color(winderInfoTimeLabelIcon, lv_color_hex(0xFFFFFF), 0);
   lv_label_set_text(winderInfoTimeLabelIcon, CLOCK_SYMBOL);
   lv_obj_align_to(winderInfoTimeLabelIcon, winderInfoWeightLabelIcon, LV_ALIGN_OUT_BOTTOM_LEFT, 0, 25);

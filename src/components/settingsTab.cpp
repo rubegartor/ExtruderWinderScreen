@@ -60,7 +60,6 @@ static void lv_temp_spinbox_increment_event_cb(lv_event_t *event)
   }
 }
 
-
 static void event_handler(lv_event_t *event)
 {
   lv_event_code_t code = lv_event_get_code(event);
@@ -77,10 +76,8 @@ static void event_handler(lv_event_t *event)
   }
 }
 
-static void restar_system_cb(lv_event_t *event) {
+static void restart_system_cb(lv_event_t *event) {
   communication.sendEvent("reboot", "");
-
-  delay(1500);
 }
 
 void build_settingsTab(lv_obj_t *parent) {
@@ -190,7 +187,7 @@ void build_settingsTab(lv_obj_t *parent) {
   lv_obj_t *restartSystemBtn = lv_btn_create(settingsParent);
   lv_obj_align(restartSystemBtn, LV_ALIGN_BOTTOM_RIGHT, 0, 0);
   lv_obj_set_style_bg_color(restartSystemBtn, lv_palette_main(LV_PALETTE_BLUE), 0);
-  lv_obj_add_event_cb(restartSystemBtn, restar_system_cb, LV_EVENT_CLICKED, NULL);
+  lv_obj_add_event_cb(restartSystemBtn, restart_system_cb, LV_EVENT_CLICKED, NULL);
 
   lv_obj_t *restartSystemBtnLabel = lv_label_create(restartSystemBtn);
   lv_obj_set_style_text_color(restartSystemBtnLabel, lv_color_hex(0xFFFFFF), 0);

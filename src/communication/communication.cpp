@@ -9,23 +9,34 @@ typedef struct struct_message {
 struct_message sendingData;
 struct_message incomingData;
 
-String sendOutBuffer[QEUE_BUFFER_SIZE];
-uint16_t sendOutBufferIndex = 0;
+String sendOutBuffer[QUEUE_BUFFER_SIZE];
+uint8_t sendOutBufferIndex = 0;
 
 void _emptyBuffer() {
-  memset(sendOutBuffer, 0, QEUE_BUFFER_SIZE);
+  memset(sendOutBuffer, 0, sizeof(sendOutBuffer) / sizeof(String));
   sendOutBufferIndex = 0;
+}
+
+String _fillBuffer(String data) {
+  String whiteSpaces = "";
+
+  for (uint16_t i = 0; i < (QUEUE_BUFFER_SIZE - data.length()); i++) {
+    whiteSpaces += " ";
+  }
+  
+  return whiteSpaces;
 }
 
 void _requestEvent() {
   if (sendOutBufferIndex > 0) {
-    for (uint8_t i = 0; i < 32; i++) {
-      Wire.write(sendOutBuffer[i].c_str());
+    for (String toSend : sendOutBuffer) {
+      if (toSend.isEmpty()) continue;
+      Wire.write(toSend.c_str());
     }
 
     _emptyBuffer();
   } else {
-    Wire.write("                                ");
+    Wire.write(_fillBuffer("").c_str());
   }
 }
 
@@ -39,7 +50,7 @@ void _convertToStruct(const String &input, char delimiter) {
 void _receiveEvent(int bytes) {
   String line = "";
   while (Wire.available()) {
-    for (int i = 0; i < bytes; i++) {
+    for (uint8_t i = 0; i < bytes; i++) {
       byte x = Wire.read();
       line += (char)x;
     }
@@ -48,6 +59,7 @@ void _receiveEvent(int bytes) {
   _convertToStruct(line, ';');
 
   if (incomingData.key == "resetScr") {
+    NVIC_SystemReset();
   }
 
   if (incomingData.key == "lastRead") {
@@ -55,12 +67,10 @@ void _receiveEvent(int bytes) {
   }
 
   if (incomingData.key == "minRead") {
-    reqMinReadSetted = true;
     lv_label_set_text(minMeasureLabel, incomingData.data.c_str());
   }
 
   if (incomingData.key == "maxRead") {
-    reqMaxReadSetted = true;
     lv_label_set_text(maxMeasureLabel, incomingData.data.c_str());
   }
 
@@ -81,43 +91,32 @@ void _receiveEvent(int bytes) {
   }
 
   if (incomingData.key == "stTemp") {
-    reqTempSetted = true;
     lv_spinbox_set_value(waterTempSpinbox, incomingData.data.toInt());
   }
 
   if (incomingData.key == "minPSpeed") {
-    reqMinPSpeedSetted = true;
     lv_spinbox_set_value(minSpeedSpinbox, incomingData.data.toInt());
   }
 
   if (incomingData.key == "maxPSpeed") {
-    reqMaxPSpeedSetted = true;
     lv_spinbox_set_value(maxSpeedSpinbox, incomingData.data.toInt());
   }
 
   if (incomingData.key == "polymer") {
-    reqPolymerSetted = true;
     lv_dropdown_set_selected(polymerDropdown, incomingData.data.toInt());
   }
 
   if (incomingData.key == "diameter") {
-    reqDiameterSetted = true;
     lv_spinbox_set_value(diameterSpinbox, incomingData.data.toFloat() * 100);
-    delay(100);
     lv_obj_invalidate(diameterSpinbox);
   }
 
   if (incomingData.key == "autostop") {
-    reqAutoStopSetted = true;
-
     lv_spinbox_set_value(autostopSpinbox, incomingData.data.toFloat() * 100);
-    delay(100);
     lv_obj_invalidate(autostopSpinbox);
   }
 
   if (incomingData.key == "maxPosition") {
-    reqMaxPositionSetted = true;
-
     uint16_t maxPosition = incomingData.data.toInt();
     lv_bar_set_range(positionBar, lv_bar_get_min_value(positionBar), maxPosition);
     lv_label_set_text(positionBarMaxLabel, String(maxPosition).c_str());
@@ -126,8 +125,6 @@ void _receiveEvent(int bytes) {
   }
 
   if (incomingData.key == "minPosition") {
-    reqMinPositionSetted = true;
-
     int16_t minPosition = incomingData.data.toInt();
     lv_bar_set_range(positionBar, minPosition, lv_bar_get_max_value(positionBar));
     lv_label_set_text(positionBarMinLabel, String(minPosition).c_str());
@@ -141,41 +138,48 @@ void _receiveEvent(int bytes) {
   }
 
   if (incomingData.key == "positioned") {
-    reqPositionedSetted = true;
-
-    if (incomingData.data.toInt() == true) {
+    if ((bool)incomingData.data.toInt()) {
       lv_obj_set_style_pad_top(controlParentContent, 80, 0);
       lv_obj_del(startAlignerBtn);
     }  
   }
 
   if (incomingData.key == "stAutoStop") {
-    reqStAutoStopSetted = true;
-    String labelText;
+    rgb.off();
 
-    if (incomingData.data.toInt() == 0) {
-      labelText = "Auto Stop  " LV_SYMBOL_OK;
-    } else if (incomingData.data.toInt() == 2) {
-      labelText = "Auto Stop  " LV_SYMBOL_CLOSE;
-    } else {
-      labelText = "Auto Stop";
+    switch (incomingData.data.toInt()){
+      case 0:
+        rgb.on(0, 255, 0);
+        break;
+      case 2:
+        rgb.on(255, 0, 0);
+        break;
     }
-
-    lv_label_set_text(autostopSpinboxLabel, labelText.c_str());
   }
 }
 
 void Communication::sendEvent(String eventName, String eventData) {
-  String builtData = eventName + ";" + eventData;
-  String whiteSpaces = "";
+  sendingData.key = eventName;
+  sendingData.data = eventData;
 
-  for (uint16_t i = 0; i < (QEUE_BUFFER_SIZE - builtData.length()); i++) {
-    whiteSpaces += " ";
-  }
+  String builtData = sendingData.key + ";" + sendingData.data;
+  builtData = builtData + _fillBuffer(builtData);
 
-  builtData = builtData + whiteSpaces;
+  if (builtData.length() != QUEUE_BUFFER_SIZE) return;
+  if (sendOutBufferIndex > QUEUE_BUFFER_SIZE - 1) return;
+  
   sendOutBuffer[sendOutBufferIndex] = builtData;
   sendOutBufferIndex++;
+}
+
+void Communication::handleRequests() {
+  if (this->requestCompletedIndex == sizeof(requests) / sizeof(String)) return;
+
+  if (!requestsCompleted && millis() - this->lastMillisRequests > REQUESTS_DELAY) {
+    communication.sendEvent(requests[this->requestCompletedIndex], "");
+    this->requestCompletedIndex++;
+    this->lastMillisRequests = millis();
+  }
 }
 
 void Communication::init() {

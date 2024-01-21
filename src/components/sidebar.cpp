@@ -4,8 +4,6 @@
 #include <components/popupTab.h>
 #include <components/general.h>
 
-#define SIDEBAR_WIDTH 110
-
 lv_obj_t *homeBtn, *listBtn, *settingsBtn;
 
 
@@ -104,7 +102,7 @@ void build_sidebar() {
     lv_obj_add_event_cb(listBtn, open_list_tab, LV_EVENT_CLICKED, NULL);
 
     lv_obj_t *listBtnLabel = lv_label_create(listBtn);
-    lv_obj_set_style_text_font(listBtnLabel, &testfont, 0);
+    lv_obj_set_style_text_font(listBtnLabel, &icons, 0);
     lv_label_set_text(listBtnLabel, MOVE_SYMBOL);
     lv_obj_center(listBtnLabel);
     lv_obj_add_style(listBtnLabel, &sidebarButtonLabelStyle, 0);

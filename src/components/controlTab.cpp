@@ -39,8 +39,6 @@ static void home_aligner_cb(lv_event_t *event) {
 static void set_aligner_end_position(lv_event_t *event) {
   communication.sendEvent("setAligner", "");
 
-  delay(250);
-
   lv_obj_t *tempParent = lv_obj_get_parent(event->target);
 
   lv_obj_del(event->target);
@@ -61,8 +59,6 @@ static void set_aligner_start_position(lv_event_t *event) {
   lv_label_set_text(alignerSetEndPositionBtnLabel, "Establecer fin");
   lv_obj_set_style_text_color(alignerSetEndPositionBtnLabel, lv_color_hex(0xFFFFFF), 0);
 
-  delay(250);
-
   lv_obj_del(event->target);
 }
 
@@ -80,10 +76,6 @@ static void start_aligner(lv_event_t *event) {
   lv_obj_align(alignerSetStartPositionBtnLabel, LV_ALIGN_CENTER, 0, 0);
   lv_label_set_text(alignerSetStartPositionBtnLabel, "Establecer inicio");
   lv_obj_set_style_text_color(alignerSetStartPositionBtnLabel, lv_color_hex(0xFFFFFF), 0);
-}
-
-static void positionbar_change_cb(lv_event_t *event) {
-  lv_label_set_text(positionBarMaxLabel, String(lv_bar_get_max_value(event->target)).c_str());
 }
 
 void build_controlTab(lv_obj_t *parent) {
